@@ -1,90 +1,91 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
 'use strict';
 
-//var Vue = require('vue');
-require('./utils/extensions.js');
-var state = require('./state');
+(function () {
+    require('./utils/extensions.js');
+    var state = require('./state');
 
-var app = Vue.extend({
-    el: function el() {
-        return 'body';
-    },
-
-    components: {
-        'loading-view': require('./components/loading')
-    },
-
-    mixins: [require('./modules/messages-controller')],
-
-    data: function data() {
-        return {
-            state: state,
-            isLoading: false,
-            preventLoading: false,
-            params: {},
-            actions: []
-        };
-    },
-
-    ready: function ready() {
-        this.registerEventListeners();
-        this.showStartPage();
-    },
-
-    methods: {
-        registerEventListeners: function registerEventListeners() {
-            $(document).bind('ajaxSend', (function () {
-                if (this.preventLoading) {
-                    this.preventLoading = false;
-                    return;
-                }
-                this.isLoading = true;
-            }).bind(this)).bind('ajaxStop', (function () {
-                this.isLoading = false;
-            }).bind(this)).bind('ajaxComplete', (function (e, responseData, settings) {
-                if (settings.suppressMessages) return;
-
-                if (responseData.responseJSON !== undefined && responseData.responseJSON.messages !== undefined) {
-                    for (var messageType in responseData.responseJSON.messages) {
-                        for (var messageIndex in responseData.responseJSON.messages[messageType]) {
-                            this.$emit(messageType + '-message', responseData.responseJSON.messages[messageType][messageIndex]);
-                        }
-                    }
-                }
-            }).bind(this));
-
-            this.$on('error-message', this.showErrorMessage);
-            this.$on('general-message', this.showGeneralMessage);
-            this.$on('warning-message', this.showWarningMessage);
-            this.$on('success-message', this.showSuccessMessage);
-
-            this.$on('buttons-update', (function (buttons) {
-                this.actions = buttons;
-            }).bind(this));
+    var app = Vue.extend({
+        el: function el() {
+            return 'body';
         },
 
-        showStartPage: function showStartPage() {
-            router.go('/snippets');
+        components: {
+            'loading-view': require('./components/loading')
+        },
+
+        mixins: [require('./modules/messages-controller')],
+
+        data: function data() {
+            return {
+                state: state,
+                isLoading: false,
+                preventLoading: false,
+                params: {},
+                actions: []
+            };
+        },
+
+        ready: function ready() {
+            this.registerEventListeners();
+            this.showStartPage();
+        },
+
+        methods: {
+            registerEventListeners: function registerEventListeners() {
+                $(document).bind('ajaxSend', (function () {
+                    if (this.preventLoading) {
+                        this.preventLoading = false;
+                        return;
+                    }
+                    this.isLoading = true;
+                }).bind(this)).bind('ajaxStop', (function () {
+                    this.isLoading = false;
+                }).bind(this)).bind('ajaxComplete', (function (e, responseData, settings) {
+                    if (settings.suppressMessages) return;
+
+                    if (responseData.responseJSON !== undefined && responseData.responseJSON.messages !== undefined) {
+                        for (var messageType in responseData.responseJSON.messages) {
+                            for (var messageIndex in responseData.responseJSON.messages[messageType]) {
+                                this.$emit(messageType + '-message', responseData.responseJSON.messages[messageType][messageIndex]);
+                            }
+                        }
+                    }
+                }).bind(this));
+
+                this.$on('error-message', this.showErrorMessage);
+                this.$on('general-message', this.showGeneralMessage);
+                this.$on('warning-message', this.showWarningMessage);
+                this.$on('success-message', this.showSuccessMessage);
+
+                this.$on('buttons-update', (function (buttons) {
+                    this.actions = buttons;
+                }).bind(this));
+            },
+
+            showStartPage: function showStartPage() {
+                router.go('/snippets');
+            }
         }
-    }
-});
+    });
 
-var router = new VueRouter();
+    var router = new VueRouter();
 
-router.map({
-    '/snippets': {
-        component: require('./pages/snippets-list')
-    },
-    '/snippets/edit/:id': {
-        component: require('./pages/snippet-details'),
-        name: 'snippet-details'
-    },
-    '/snippets/create': {
-        component: require('./pages/snippet-details')
-    }
-});
+    router.map({
+        '/snippets': {
+            component: require('./pages/snippets-list')
+        },
+        '/snippets/edit/:id': {
+            component: require('./pages/snippet-details'),
+            name: 'snippet-details'
+        },
+        '/snippets/create': {
+            component: require('./pages/snippet-details')
+        }
+    });
 
-router.start(app, 'body');
+    router.start(app, 'body');
+})();
 
 },{"./components/loading":2,"./modules/messages-controller":7,"./pages/snippet-details":8,"./pages/snippets-list":10,"./state":12,"./utils/extensions.js":15}],2:[function(require,module,exports){
 'use strict';
