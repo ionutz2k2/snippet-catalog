@@ -1,0 +1,33 @@
+.modal-form-container {
+  @include full_screen('', '', fixed);
+  display: flex;
+  align-items: center;
+
+  & .modal-form {
+    background-color: $background-color;
+    border: 1px solid #777;
+    border-radius: 5px;
+    text-align: left;
+    padding: 15px;
+  }
+
+  & .form-title {
+    color: #000;
+    font-weight: 900;
+  }
+}
+
+.modal-background {
+  @include full_screen(#fff, 0.7);
+}
+
+.loading {
+
+  & .loading-background {
+    opacity: 1;
+  }
+
+  .loading-content {
+    margin-top: -7%;
+  }
+}

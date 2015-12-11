@@ -1,0 +1,87 @@
+<div class="tool-bar">
+    <div class="container">
+        <h3>{{ params.title }}</h3>
+        <form class="form-inline">
+            <div class="form-group has-feedback">
+                <label class="sr-only" for="search_input">Search</label>
+                <span class="glyphicon glyphicon-search" aria-hidden="true"></span>
+                <input type="text" class="form-control" id="search_input" placeholder="Search..." v-model="listState.filterText">
+                <span id="clearSearchText"
+                      class="glyphicon glyphicon-remove form-control-feedback"
+                      aria-hidden="true"
+                      v-on="click: listState.filterText = '';"></span>
+            </div>
+        </form>
+        <nav class="pagination-nav" v-if="pagesCount > 1">
+            <ul class="pagination navbar-right">
+                <li>
+                    <a href="#" aria-label="Previous" v-on="click: changePage(0)">
+                        <span aria-hidden="true">&leftarrow;</span>
+                    </a>
+                </li>
+                <li v-if="pagesCount > selectablePagesCount">
+                    <a href="#" aria-label="Previous" v-on="click: changePage(listState.currentPageIndex - selectablePagesCount)">
+                        <span aria-hidden="true">&laquo;</span>
+                    </a>
+                </li>
+                <li v-repeat="selectablePagesCount" v-class="active: ($index + listState.currentStartIndex) === listState.currentPageIndex"><a href="#" v-on="click: changePage($index + listState.currentStartIndex)">{{ $index + listState.currentStartIndex + 1 }}</a></li>
+                <li v-if="pagesCount > selectablePagesCount">
+                    <a href="#" aria-label="Next" v-on="click: changePage(listState.currentPageIndex + selectablePagesCount)">
+                        <span aria-hidden="true">&raquo;</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="#" aria-label="Previous" v-on="click: changePage(pagesCount - 1)">
+                        <span aria-hidden="true">&rightarrow;</span>
+                    </a>
+                </li>
+            </ul>
+            <div class="pages-hint">Page {{ listState.currentPageIndex + 1 }} of {{ pagesCount }}</div>
+        </nav>
+        <form class="form-inline paginator-config">
+            <label for="itemsPerPageSelect">items per page</label>
+            <select id="itemsPerPageSelect" class="form-control" v-model="listState.itemsPerPage" options="itemsPerPageOptions"></select>
+        </form>
+    </div>
+</div>
+<div class="container paginated-list-container">
+    <div class="well text-center" v-if="!params.columns || !params.columns.length">You have no items created yet. Click on the <strong>Create</strong> button to start adding new items.</div>
+    <div class="table-responsive clear" v-if="params.columns && params.columns.length">
+        <table class="table table-striped table-hover">
+            <thead>
+                <tr>
+                    <th>
+                        <input type="checkbox"
+                               v-model="allSelected"
+                               v-on="click: toggleSelectAll()">
+                    </th>
+                    <th v-repeat="column: params.columns" class="text-nowrap"
+                        v-on="click: sortBy($index)">
+                        {{column | columnate | capitalize}}
+                        <i class="fa"
+                           v-class="fa-sort: $index != listState.sortByIndex,
+                                    fa-sort-asc: ($index == listState.sortByIndex) && !listState.reverseSort,
+                                    fa-sort-desc: ($index == listState.sortByIndex) && listState.reverseSort"></i>
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr v-if="params.columns && !filteredData.length">
+                    <td colspan="{{params.columns.length + 1}}" class="text-center">No results found.</td>
+                </tr>
+                <tr v-repeat="entry: params.data | filterBy listState.filterText | orderBy params.columns[listState.sortByIndex] listState.reverseSort | paginate">
+                    <td v-on="click: itemChecked(entry)">
+                        <input type="checkbox"
+                               v-model="entry.selected"
+                        >
+                    </td>
+                    <td v-repeat="column: params.columns">
+                        <a v-link="{name: 'snippet-details', params: { 'id': entry.id }}">
+                            <div>{{{ parseData(entry[column]) }}}</div>
+                        </a>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>

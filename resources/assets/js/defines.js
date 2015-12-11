@@ -1,0 +1,6 @@
+module.exports = {
+    ERROR_MESSAGE: 0,
+    WARNING_MESSAGE: 1,
+    GENERAL_MESSAGE: 2,
+    SUCCESS_MESSAGE: 3
+};

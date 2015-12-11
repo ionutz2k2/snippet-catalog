@@ -1,0 +1,17 @@
+.message_container
+{
+  position: fixed;
+  right: 5px;
+  bottom: 60px;
+  max-width: 30%;
+  z-index: 1002;
+
+  list-style: none;
+  margin-bottom: 0;
+
+  li {
+    margin-top: 0.5em;
+    margin-bottom: 0;
+    cursor: default;
+  }
+}

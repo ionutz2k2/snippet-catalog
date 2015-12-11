@@ -1,0 +1,19 @@
+.expand-transition {
+  transition: transform .2s ease;
+}
+
+.expand-enter {
+  transform: translate3d(0, 50px, 0);
+}
+.expand-leave {
+  transform: scale3d(0, 0, 0);
+}
+
+
+.fade-transition {
+  transition: all .3s ease;
+}
+
+.fade-enter, .fade-leave {
+  opacity: 0;
+}
