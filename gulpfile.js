@@ -22,6 +22,7 @@ elixir(function(mix) {
         ], 'public/js/vendor.js')
         .styles([
          'libs/bootstrap.css',
+         'libs/font-awesome.min.css',
          'app.css'
         ]);
 });
